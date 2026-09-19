@@ -84,3 +84,26 @@ int main()
 
     return 0;
 }
+
+
+
+Enter number of vertices: 5
+
+Enter the adjacency matrix:
+0 10 9999 30 100
+10 0 50 9999 9999
+9999 50 0 20 10
+30 9999 20 0 60
+100 9999 10 60 0
+
+Enter starting vertex: 0
+
+
+
+
+Shortest distances from vertex 0:
+To vertex 0 = 0
+To vertex 1 = 10
+To vertex 2 = 50
+To vertex 3 = 30
+To vertex 4 = 60
