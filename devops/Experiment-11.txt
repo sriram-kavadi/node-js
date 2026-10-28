@@ -1,0 +1,156 @@
+Experiment-11:
+==============
+Write a simple program in JavaScript and perform testing using Selenium.
+
+Aim:
+----
+To write a simple JavaScript program and perform automated testing using Selenium WebDriver.
+
+Requirements:
+-------------
+1)Node.js
+2)Google Chrome
+3)Selenium WebDriver
+4)VS Code or any text editor
+
+1. Install Node.js
+------------------
+Check the installation:
+ 
+         node --version
+         npm --version
+
+2. Create a Project
+-------------------
+
+          mkdir selenium-demo
+          cd selenium-demo
+          npm init -y
+     
+Install Selenium WebDriver:
+
+          npm install selenium-webdriver
+
+3. Create a Simple JavaScript Program
+--------------------------------------
+Create a file named calculator.html:
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Calculator</title>
+</head>
+<body>
+
+<h2>Simple Calculator</h2>
+
+<input type="number" id="num1" placeholder="Enter first number">
+<input type="number" id="num2" placeholder="Enter second number">
+
+<button id="addButton" onclick="addNumbers()">Add</button>
+
+<p id="result"></p>
+
+<script>
+function addNumbers() {
+    let a = Number(document.getElementById("num1").value);
+    let b = Number(document.getElementById("num2").value);
+
+    let sum = a + b;
+
+    document.getElementById("result").innerHTML = sum;
+}
+</script>
+
+</body>
+</html>
+
+This program accepts two numbers and displays their sum.
+
+4. Create Selenium Test Program
+--------------------------------
+Create test.js:
+
+const { Builder, By } = require("selenium-webdriver");
+const assert = require("assert");
+
+async function testCalculator() {
+
+    let driver = await new Builder()
+        .forBrowser("chrome")
+        .build();
+
+    try {
+        // Open calculator web page
+        await driver.get(
+            "file:///C:/selenium-demo/calculator.html"
+        );
+
+        // Enter first number
+        await driver.findElement(By.id("num1"))
+            .sendKeys("10");
+
+        // Enter second number
+        await driver.findElement(By.id("num2"))
+            .sendKeys("20");
+
+        // Click Add button
+        await driver.findElement(By.id("addButton"))
+            .click();
+
+        // Get result
+        let result = await driver.findElement(By.id("result"))
+            .getText();
+
+        console.log("Expected Result: 30");
+        console.log("Actual Result: " + result);
+
+        // Verify result
+        assert.strictEqual(result, "30");
+
+        console.log("TEST PASSED");
+
+    } catch (error) {
+        console.log("TEST FAILED");
+        console.log(error);
+
+    } finally {
+        await driver.quit();
+    }
+}
+
+testCalculator();
+
+5. Execute the Selenium Test
+----------------------------
+Run:
+
+    node test.js
+
+Selenium will:
+
+1)Open Chrome.
+2)Open the calculator page.
+3)Enter 10.
+4)Enter 20.
+5)Click Add.
+6)Read the result.
+7)Compare the actual result with the expected result 30.
+8)Display the test result.
+9)Close Chrome.
+
+Expected Output:
+----------------
+Expected Result: 30
+Actual Result: 30
+TEST PASSED
+
+If the calculator produces a different result:
+
+Expected Result: 30
+Actual Result: 25
+TEST FAILED
+
+Result
+------
+Thus, a simple JavaScript calculator program was developed and successfully tested using Selenium WebDriver.

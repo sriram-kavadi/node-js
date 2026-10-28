@@ -1,0 +1,110 @@
+Experiment-10:
+==============
+Install & Explore Selenium for automated Testing.
+
+Aim:
+----
+To install and explore Selenium WebDriver for automating web application testing and execute a simple automated test case.
+
+Software Requirements
+----------------------
+1)Windows/Linux operating system
+2)Python 3.x
+3)Google Chrome browser
+4)Selenium WebDriver
+5)VS Code / PyCharm / Command Prompt
+
+Note:
+-----
+Selenium is an open-source automation testing framework used to automate web browsers. It supports popular browsers such as Chrome, Firefox, Edge, and Safari.
+
+The major components of Selenium are:
+
+1)Selenium WebDriver – Automates browser actions.
+2)Selenium IDE – Provides record-and-playback functionality.
+3)Selenium Grid – Executes tests on multiple machines and browsers.
+
+For DevOps, Selenium is commonly integrated with CI/CD tools such as Jenkins to automatically execute test cases whenever new code is deployed.
+
+Procedure:
+----------
+Step 1: Check Python Installation
+-------
+
+Open Command Prompt and execute:
+
+                python --version
+
+If Python is installed, its version will be displayed.
+
+Step 2: Install Selenium
+-------
+         pip install selenium
+
+Verify the installation:
+
+         pip show selenium
+
+Step 3: Create a Python Program
+-------
+
+Create a file named:
+
+selenium_test.py
+----------------
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+# Start Chrome browser
+driver = webdriver.Chrome()
+
+# Open a web page
+driver.get("https://www.google.com")
+
+# Display page title
+print("Page Title:", driver.title)
+
+# Find the search box
+search_box = driver.find_element(By.NAME, "q")
+
+# Enter search text
+search_box.send_keys("Selenium WebDriver")
+
+# Submit the search
+search_box.submit()
+
+# Display the resulting page title
+print("Result Page Title:", driver.title)
+
+# Close the browser
+driver.quit()
+
+Step 4: Execute the Program
+-------
+Run:
+
+        python selenium_test.py
+
+The Chrome browser will open automatically, navigate to Google, enter Selenium WebDriver, and perform the search.
+
+Expected Output:
+----------------
+Page Title: Google
+Result Page Title: Selenium WebDriver - Google Search
+
+Important Selenium WebDriver Commands:
+--------------------------------------
+Command	                     Purpose
+--------                     -------
+webdriver.Chrome()	 Opens Chrome browser
+driver.get(url)	         Opens a web page
+driver.title	         Gets page title
+driver.current_url	 Gets current URL
+find_element()	         Finds an HTML element
+send_keys()	         Enters text
+click()	                 Clicks an element
+submit()	         Submits a form
+driver.back()	         Goes to previous page
+driver.forward()	 Goes to next page
+driver.refresh()	 Refreshes the page
+driver.quit()	         Closes the browser

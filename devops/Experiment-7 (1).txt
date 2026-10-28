@@ -1,0 +1,57 @@
+Experiment-7:
+=============
+Develop a simple containerized application using Docker.
+
+Aim:
+----
+To develop and deploy a simple containerized application using Docker by creating a Docker image, running it as a container, and verifying its execution.
+
+Requirements:
+-------------
+->Docker installed and configured
+->A text editor or IDE
+->knowledge of Docker commands
+->Sample application (HTML or Java or Python)
+
+Example 1: Simple HTML Application
+----------
+Step 1: Create index.html
+-------------------------
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Docker Demo</title>
+</head>
+<body>
+    <h1>Welcome to Docker!</h1>
+    <p>This is a simple containerized web application.</p>
+</body>
+</html>
+
+Step 2: Create a Dockerfile
+----------------------------
+FROM nginx:latest
+
+COPY index.html /usr/share/nginx/html/index.html
+
+EXPOSE 80
+
+Step 3: Build the Docker Image
+------------------------------
+docker build -t docker-demo .
+
+Step 4: Run the Docker Container
+--------------------------------
+docker run -d -p 8080:80 --name docker-container docker-demo
+
+Step 5: Verify the Application
+------------------------------
+Open a web browser and visit:
+
+       http://localhost:8080
+
+The page displays:
+
+Welcome to Docker!
+This is a simple containerized web application.

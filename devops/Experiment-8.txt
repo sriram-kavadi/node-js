@@ -1,0 +1,109 @@
+Experiment-8:
+=============
+Integrate Kubernetes and Docker.
+
+Aim:
+----
+To integrate Docker and Kubernetes by deploying a Docker container as a Kubernetes Pod and exposing it as a service for container orchestration and management.
+
+Requirements:
+-------------
+->Docker installed
+->Kubernetes cluster (Minikube, Kind, Docker Desktop Kubernetes, or a cloud Kubernetes cluster)
+->kubectl installed and configured
+->A Docker image (e.g., Nginx or a custom application)
+
+Procedure:
+----------
+1)Create or obtain a Docker application.
+2)Build the Docker image.
+3)Push the image to a container registry (Docker Hub or another registry).
+4)Start the Kubernetes cluster.
+5)Create a Kubernetes Deployment using the Docker image.
+6)Expose the Deployment using a Kubernetes Service.
+7)Verify that the Pod and Service are running.
+8)Access the deployed application through the exposed service.
+
+
+Step 1: Build the Docker Image
+-------------------------------
+
+        docker build -t username/myapp:v1 
+
+Step 2: Push the Image to Docker Hub
+-------------------------------------
+
+        docker login
+        docker push username/myapp:v1
+
+Step 3: Create a Kubernetes Deployment (deployment.yaml)
+--------------------------------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: username/myapp:v1
+        ports:
+        - containerPort: 80
+
+Step 4: Create a Service (service.yaml)
+---------------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  selector:
+    app: myapp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: NodePort
+
+Step 5: Deploy to Kubernetes
+-----------------------------
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+
+Step 6: Verify Deployment
+--------------------------
+kubectl get deployments
+kubectl get pods
+kubectl get services
+
+Step 7: Access the Application
+-------------------------------
+For Minikube:
+
+     minikube service myapp-service
+
+For other Kubernetes clusters:
+
+     kubectl get service myapp-service
+
+Access the application using the displayed NodePort or LoadBalancer address.
+
+Expected Output:
+----------------
+->Docker image is successfully built and pushed to a container registry.
+->Kubernetes creates the specified number of Pods.
+->The Deployment maintains the desired replica count.
+->The Service exposes the application.
+->The application is accessible through the Kubernetes Service.
+
+Result:
+-------
+Docker was successfully integrated with Kubernetes by deploying a Docker container as a Kubernetes Deployment and exposing it through a Kubernetes Service. The application was orchestrated by Kubernetes, demonstrating automated deployment, scalability, and container management.

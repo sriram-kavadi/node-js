@@ -1,0 +1,279 @@
+Experiment-9:
+=============
+Automate the process of running containerized application for exercise 7 using Kubernetes.
+
+Aim:
+----
+To automate the deployment of a containerized application to a Kubernetes cluster using a Jenkins Pipeline.
+
+Requirements:
+--------------
+->Jenkins installed
+->Docker installed
+->Kubernetes cluster (Minikube, Kind, or Kubernetes)
+->Docker Hub account
+->GitHub repository
+->kubectl configured
+->Jenkins plugins:
+->Git Plugin
+->Docker Pipeline Plugin
+->Kubernetes CLI Plugin
+->Pipeline Plugin
+
+Architecture:
+-------------
+Developer
+    │
+    ▼
+ GitHub Repository
+    │
+    ▼
+ Jenkins Pipeline
+    │
+    ├── Checkout Source Code
+    ├── Build Docker Image
+    ├── Push Image to Docker Hub
+    └── Deploy to Kubernetes
+                 │
+                 ▼
+        Kubernetes Cluster
+                 │
+                 ▼
+        Running Containerized App
+
+Project Structure:
+------------------
+container-app/
+│
+├── app.py
+├── requirements.txt
+├── Dockerfile
+├── deployment.yaml
+├── service.yaml
+└── Jenkinsfile
+
+Step 1: Sample Python Application
+---------------------------------
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Welcome to Kubernetes with Jenkins Pipeline!"
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+
+requirements.txt
+----------------
+Flask
+
+Step 2: Dockerfile
+------------------
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY . .
+
+RUN pip install -r requirements.txt
+
+EXPOSE 5000
+
+CMD ["python","app.py"]
+
+Step 3: Build Docker Image
+---------------------------
+docker build -t username/container-app:v1 .
+
+Step 4: Push Image
+------------------
+docker login
+
+docker push username/container-app:v1
+
+Step 5: Kubernetes Deployment
+------------------------------
+deployment.yaml
+---------------
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: container-app
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: container-app
+
+  template:
+    metadata:
+      labels:
+        app: container-app
+
+    spec:
+      containers:
+      - name: container-app
+
+        image: username/container-app:v1
+
+        ports:
+        - containerPort: 5000
+
+service.yaml
+------------
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: container-service
+
+spec:
+  selector:
+    app: container-app
+
+  ports:
+  - port: 80
+    targetPort: 5000
+
+  type: NodePort
+
+Step 6: Jenkins Pipeline (Jenkinsfile)
+--------------------------------------
+pipeline {
+
+    agent any
+
+    environment {
+        IMAGE_NAME = "username/container-app"
+        IMAGE_TAG = "v1"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/username/container-app.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+
+                    sh '''
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    docker push $IMAGE_NAME:$IMAGE_TAG
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh '''
+                kubectl apply -f deployment.yaml
+                kubectl apply -f service.yaml
+                '''
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh '''
+                kubectl get pods
+                kubectl get services
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment Successful!"
+        }
+
+        failure {
+            echo "Pipeline Failed!"
+        }
+    }
+}
+
+Step 7: Create Jenkins Pipeline Job
+-----------------------------------
+1)Open Jenkins Dashboard.
+2)Click New Item.
+3)Select Pipeline.
+4)Configure the GitHub repository URL.
+5)Choose Pipeline script from SCM.
+6)Save the configuration.
+7)Click Build Now.
+
+Pipeline Execution Flow
+------------------------
+GitHub Commit
+      │
+      ▼
+ Jenkins Trigger
+      │
+      ▼
+Checkout Code
+      │
+      ▼
+Build Docker Image
+      │
+      ▼
+Push Image to Docker Hub
+      │
+      ▼
+Deploy to Kubernetes
+      │
+      ▼
+Verify Deployment
+      │
+      ▼
+Application Running
+
+Verification Commands
+----------------------
+Check pods:
+
+    kubectl get pods
+
+Check services:
+
+    kubectl get svc
+
+Describe deployment:
+
+    kubectl describe deployment container-app
+
+View logs:
+
+    kubectl logs <pod-name>
+
+Expected Output:
+----------------
+->Jenkins successfully checks out the source code from GitHub.
+->Docker image is built and pushed to Docker Hub.
+->Kubernetes Deployment and Service are created.
+->Two application pods are running successfully.
+->The application is accessible through the Kubernetes Service.
+
+Result:
+-------
+The containerized application was successfully automated using a Jenkins Pipeline. The pipeline performed source code checkout, Docker image build, image push to Docker Hub, deployment to the Kubernetes cluster, and deployment verification, demonstrating a complete CI/CD workflow with Jenkins, Docker, and Kubernetes.
